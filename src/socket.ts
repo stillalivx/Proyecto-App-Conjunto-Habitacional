@@ -5,7 +5,7 @@ export const socketState = reactive({
     connected: false
 })
 
-const URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3456'
+const URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3459'
 
 export const socket = io(URL)
 

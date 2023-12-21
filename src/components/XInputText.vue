@@ -29,6 +29,7 @@ defineEmits(['update:modelValue'])
         :placeholder="placeholder"
         @input="$emit('update:modelValue', (<HTMLInputElement>$event.target).value)"
         :required="true"
+        :value="modelValue"
         class="outline-none py-2.5 px-3 text-sm shadow-sm rounded-md border border-slate-200"
     />
   </div>

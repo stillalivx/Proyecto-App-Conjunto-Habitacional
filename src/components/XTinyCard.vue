@@ -7,10 +7,6 @@ interface Props {
 }
 
 defineProps<Props>()
-
-import { dayjs } from '../dayjs'
-
-const fromNowDate = dayjs().fromNow()
 </script>
 
 <template>
@@ -23,9 +19,6 @@ const fromNowDate = dayjs().fromNow()
     </div>
     <div class="text-5xl mb-2.5">
       {{ value }}
-    </div>
-    <div class="text-[12px] text-gray-500">
-      Ultima actualización {{ fromNowDate }}
     </div>
   </div>
 </template>

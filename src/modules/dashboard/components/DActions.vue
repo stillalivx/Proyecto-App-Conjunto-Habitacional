@@ -1,13 +1,22 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import Swal from 'sweetalert2'
+
+import { socket } from '../../../socket.ts'
+
+import { useHistoryStore } from '../../../stores/history.store.ts'
 
 import XSelectInput from '../../../components/XSelectInput.vue'
 import XSolidAction from '../../../components/XSolidAction.vue'
 
-const options = [
-  { value: '1', label: 'Edificio 1' },
-  { value: '2', label: 'Edificio 2' }
-]
+const historyStore = useHistoryStore()
+
+const options = computed(() =>
+  historyStore.config.buildings.map(b => ({
+    value: b.id.toString(),
+    label: b.alias
+  }))
+)
 
 async function deleteBuilding() {
   await Swal.fire({
@@ -18,6 +27,10 @@ async function deleteBuilding() {
     showCancelButton: true,
     confirmButtonText: 'Eliminar',
     cancelButtonText: 'Cancelar'
+  }).then(({ isConfirmed }) => {
+    if (isConfirmed) {
+      socket.emit('delete-building', parseInt(historyStore.viewOf));
+    }
   })
 }
 </script>
@@ -45,7 +58,7 @@ async function deleteBuilding() {
           title="Editar"
           @click="$router.push({ name: 'Update-Item' })"
       ></XSolidAction>
-      <XSelectInput :options="options"></XSelectInput>
+      <XSelectInput :options="options" v-model="historyStore.viewOf"></XSelectInput>
     </div>
   </div>
 </template>

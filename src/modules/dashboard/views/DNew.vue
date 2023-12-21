@@ -1,16 +1,60 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCommonStore } from '../../../stores/common.store.ts'
+
+import { socket } from '../../../socket.ts'
 
 import XFloatView from '../../../components/XFloatView.vue'
 import XInputText from '../../../components/XInputText.vue'
 import XInputButton from '../../../components/XInputButton.vue'
 
+const router = useRouter()
+const commonStore = useCommonStore()
+
 const label = ref('')
 const residents = ref('')
-
 const pumpPin = ref('')
-
 const potPin = ref('')
+const error = ref('')
+
+function addBuilding() {
+  error.value = ''
+
+  if (!label.value) {
+    error.value = 'Es necesario darle una etiqueta al edificio.'
+    return
+  }
+
+  if (!residents.value || isNaN(parseInt(residents.value))) {
+    error.value = 'Es necesario especificar el número de habitantes en el edificio.'
+    return
+  }
+
+  if (!pumpPin.value || isNaN(parseInt(pumpPin.value))) {
+    error.value = 'Es necesario asignar un pin para el control de la bomba de agua.'
+    return
+  }
+
+  if (!potPin.value || isNaN(parseInt(potPin.value))) {
+    error.value = 'Es necesario asignar un pin para el control del sensor del tinaco.'
+    return
+  }
+
+  const data = {
+    alias: label.value,
+    residents: parseInt(residents.value),
+    pins: {
+      pump: parseInt(pumpPin.value),
+      sensor: parseInt(potPin.value)
+    }
+  }
+
+  socket.emit('new-building', data)
+
+  router.back()
+  commonStore.visibleView = false
+}
 </script>
 
 <template>
@@ -25,13 +69,13 @@ const potPin = ref('')
           <XInputText
               label="Etiqueta"
               name="tag"
-              v-model="label"
+              v-model.trim="label"
               placeholder="Etiqueta"
           ></XInputText>
           <XInputText
               label="Habitantes"
               name="residents"
-              v-model="residents"
+              v-model.trim="residents"
               placeholder="Habitantes"
           ></XInputText>
         </span>
@@ -41,7 +85,7 @@ const potPin = ref('')
         <XInputText
             label="Pin"
             name="pumpPin"
-            v-model="pumpPin"
+            v-model.trim="pumpPin"
             placeholder="Pin"
         ></XInputText>
       </fieldset>
@@ -50,14 +94,18 @@ const potPin = ref('')
         <XInputText
             label="Pin"
             name="potPin"
-            v-model="potPin"
+            v-model.trim="potPin"
             placeholder="Pin"
         ></XInputText>
       </fieldset>
+      <div class="text-red-400 text-center text-xs mb-5" v-if="error.trim()">
+        {{ error }}
+      </div>
       <div class="flex justify-center">
         <XInputButton
             color-class="bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700"
             text="Agregar"
+            @click.prevent="addBuilding"
         ></XInputButton>
       </div>
     </form>

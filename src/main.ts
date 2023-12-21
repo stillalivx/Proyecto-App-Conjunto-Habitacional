@@ -14,6 +14,7 @@ import 'animate.css'
 import 'sweetalert2/dist/sweetalert2.min.css'
 
 import IRegister from './interfaces/register.interface.ts'
+import { IBuilding, IConfig } from './interfaces/config.interface.ts'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -30,7 +31,29 @@ socket.on('get-all', (data: IRegister[]) => {
     historyStore.registers.push(...data)
 })
 
+socket.on('get-config', (config: IConfig) => {
+    historyStore.config = config
+    historyStore.viewOf = historyStore.config.buildings[0]?.id.toString() || '0'
+})
+
 socket.on('data', (data: IRegister) => {
     historyStore.registers.push(data)
 })
+
+socket.on('append-building', (data: IBuilding) => {
+    historyStore.config.buildings?.push(data);
+})
+
+socket.on('delete-building-confirmation', (idDeletedBuilding: number) => {
+    historyStore.config.buildings = historyStore.config.buildings
+        ?.filter(b => b.id !== idDeletedBuilding)
+
+    historyStore.viewOf = historyStore.config.buildings[0].id.toString();
+})
+
+socket.on('update-building-confirmation', (updatedBuilding: IBuilding) => {
+    const buildingIndex = historyStore.config.buildings.findIndex(b => b.id === updatedBuilding.id)
+    historyStore.config.buildings[buildingIndex] = updatedBuilding
+})
+
 
