@@ -1,20 +1,48 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Line } from 'vue-chartjs'
-import { Chart as ChartJS, PointElement, Title, Tooltip, Legend, CategoryScale, LinearScale, LineElement } from 'chart.js'
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip
+} from 'chart.js'
+import { useHistoryStore } from '../../../stores/history.store.ts'
+import { ViewHistoryOptions } from '../../../types.ts'
 
 ChartJS.register(Title, PointElement, Tooltip, Legend, CategoryScale, LinearScale, LineElement)
 
-const labels = ref([
-    '00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'
-])
+const historyStore = useHistoryStore()
 
-const datasets = ref([
-  {
-    data: [3, 1, 2, 4, 4, 3, 2, 0],
-    label: 'Edificio 1'
+const data = computed(() => {
+  const buildingIdx = historyStore.config.buildings.findIndex(b => b.id.toString() === historyStore.viewOf)
+
+  let labels: string[] = [];
+
+  switch (historyStore.viewAs) {
+    case ViewHistoryOptions.TODAY:
+      for (let i = 0; i < 24; i++) {
+        labels.push(`${i.toString().padStart(2, '0')}:00`)
+      }
+
+      break;
   }
-])
+
+
+  return {
+    labels,
+    datasets: [
+      {
+        data: historyStore.statisticsWaterLevel,
+        label: historyStore.config.buildings[buildingIdx].alias
+      }
+    ]
+  }
+})
 
 const options = ref({
   responsive: true,
@@ -30,17 +58,12 @@ const options = ref({
   }
 })
 
-const chartData = ref({
-  labels,
-  datasets
-})
-
 </script>
 
 <template>
   <Line
       :options="options"
-      :data="chartData"
+      :data="data"
   ></Line>
 </template>
 

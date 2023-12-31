@@ -3,7 +3,6 @@ interface Props {
   title: string
   icon: string
   value: string
-  date: string
 }
 
 defineProps<Props>()

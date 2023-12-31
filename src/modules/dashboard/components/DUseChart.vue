@@ -2,13 +2,21 @@
 
 import XTextButton from '../../../components/XTextButton.vue'
 import DChart from './DChart.vue'
+import { useHistoryStore } from '../../../stores/history.store.ts'
+import { ViewHistoryOptions } from '../../../types.ts'
+
+const historyStore = useHistoryStore()
 
 const viewOptions = [
-  { label: 'Hoy', status: false },
-  { label: 'Semanal', status: false },
-  { label: 'Mensual', status: true },
-  { label: 'Anual', status: false }
+  { label: 'Hoy', value: ViewHistoryOptions.TODAY },
+  { label: 'Semanal', value: ViewHistoryOptions.WEEKLY },
+  { label: 'Mensual', value: ViewHistoryOptions.MONTHLY },
+  { label: 'Anual', value: ViewHistoryOptions.YEARLY }
 ]
+
+function setViewValue(val: ViewHistoryOptions) {
+  historyStore.viewAs = val;
+}
 </script>
 
 <template>
@@ -17,7 +25,8 @@ const viewOptions = [
       <XTextButton
           v-for="option in viewOptions"
           :text="option.label"
-          :active="option.status"
+          :active="option.value === historyStore.viewAs"
+          @click="setViewValue(option.value)"
       ></XTextButton>
     </div>
     <div class="relative">

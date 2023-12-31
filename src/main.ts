@@ -41,14 +41,15 @@ socket.on('data', (data: IRegister) => {
 })
 
 socket.on('append-building', (data: IBuilding) => {
-    historyStore.config.buildings?.push(data);
+    const newLength = historyStore.config.buildings?.push(data)
+    historyStore.viewOf = historyStore.config.buildings[newLength - 1].id.toString()
 })
 
 socket.on('delete-building-confirmation', (idDeletedBuilding: number) => {
     historyStore.config.buildings = historyStore.config.buildings
         ?.filter(b => b.id !== idDeletedBuilding)
 
-    historyStore.viewOf = historyStore.config.buildings[0].id.toString();
+    historyStore.viewOf = historyStore.config.buildings[0].id.toString()
 })
 
 socket.on('update-building-confirmation', (updatedBuilding: IBuilding) => {

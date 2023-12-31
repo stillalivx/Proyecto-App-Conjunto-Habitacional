@@ -17,6 +17,7 @@ const residents = ref('')
 const pumpPin = ref('')
 const potPin = ref('')
 const error = ref('')
+const potCapacity = ref('')
 
 function addBuilding() {
   error.value = ''
@@ -38,6 +39,11 @@ function addBuilding() {
 
   if (!potPin.value || isNaN(parseInt(potPin.value))) {
     error.value = 'Es necesario asignar un pin para el control del sensor del tinaco.'
+    return
+  }
+
+  if (!potCapacity.value || isNaN(parseInt(potCapacity.value))) {
+    error.value = 'Es necesario asignar la capacidad máxima del tanque para el buen control.'
     return
   }
 
@@ -91,12 +97,20 @@ function addBuilding() {
       </fieldset>
       <fieldset class="border my-5 border-solid border-gray-300 p-3">
         <legend class="text-xs text-slate-500">Tinaco</legend>
-        <XInputText
-            label="Pin"
-            name="potPin"
-            v-model.trim="potPin"
-            placeholder="Pin"
-        ></XInputText>
+        <span class="space-y-4">
+          <XInputText
+              label="Pin"
+              name="potPin"
+              v-model.trim="potPin"
+              placeholder="Pin"
+          ></XInputText>
+          <XInputText
+              label="Capacidad máxima (lt)"
+              name="potCapacity"
+              v-model.trim="potCapacity"
+              placeholder="Capacidad"
+          ></XInputText>
+        </span>
       </fieldset>
       <div class="text-red-400 text-center text-xs mb-5" v-if="error.trim()">
         {{ error }}

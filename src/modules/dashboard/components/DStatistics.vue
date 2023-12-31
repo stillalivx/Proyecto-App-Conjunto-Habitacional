@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { dayjs } from '../../../dayjs'
 
 import { useHistoryStore } from '../../../stores/history.store.ts'
 
@@ -18,6 +17,20 @@ const residents = computed(() => {
 
   return building.residents.toString()
 })
+
+const tankLevel = computed(() => {
+  const tankId = parseInt(historyStore.viewOf)
+
+  for (let i = historyStore.registers.length - 1; i >= 0; i--) {
+    const register = historyStore.registers[i];
+
+    if (register.waterTank === tankId) {
+      return register.level
+    }
+  }
+
+  return 0
+})
 </script>
 
 <template>
@@ -25,19 +38,16 @@ const residents = computed(() => {
     <div class="space-y-5">
       <XTinyCard
           title="Habitantes"
-          :date="dayjs().format()"
           icon="bx bx-group"
           :value="residents"
       ></XTinyCard>
       <XTinyCard
           title="Nivel de tinaco"
-          :date="dayjs().format()"
           icon="bx bx-water"
-          value="2"
+          :value="tankLevel.toString()"
       ></XTinyCard>
       <XTinyCard
           title="Estado de la bomba"
-          :date="dayjs().format()"
           icon="bx bx-power-off"
           value="Off"
       ></XTinyCard>

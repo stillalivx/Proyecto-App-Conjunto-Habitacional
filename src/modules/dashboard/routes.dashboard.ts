@@ -1,6 +1,7 @@
 import DHome from './views/DHome.vue'
 import DNew from './views/DNew.vue'
 import DUpdate from './views/DUpdate.vue'
+import DConfIA from './views/DConfIA.vue'
 
 const dashboardRouter = {
     path: '/dashboard',
@@ -16,6 +17,11 @@ const dashboardRouter = {
             path: 'update',
             component: DUpdate,
             name: 'Update-Item'
+        },
+        {
+            path: 'conf',
+            component: DConfIA,
+            name: 'Conf-IA'
         }
     ]
 }
